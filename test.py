@@ -91,7 +91,7 @@ def run():
     #queue = Queue()
     queue = []
 
-    visited = [start]
+    #visited = [start]
     #queue.put(start)
     queue.insert(0, start)
 
@@ -117,10 +117,10 @@ def run():
         if edges != None:
             closest_edge = []
             for edge in edges:
-                if edge not in visited and graph.grid[edge[1]][edge[0]] != 1:
+                if edge not in distance and graph.grid[edge[1]][edge[0]] != 1:
                     closest_edge.append((edge, check_distance(edge, end)))
                     #queue.put(edge)
-                    visited.append(edge)
+                    #visited.append(edge)
                     distance[edge] = currentNode
            # print(closest_edge)
 
