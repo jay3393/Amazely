@@ -76,7 +76,7 @@ def check_distance(coorda, coordb):
 def run():
     size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, int(grid.WIDTH/8), size)
+    populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
 
     start = graph.start
     end = graph.end
