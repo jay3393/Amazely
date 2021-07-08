@@ -87,25 +87,32 @@ def run():
     #print(graph.grid)
 
     distance = {start:None}
+    distanceend = {end:None}
 
     #queue = Queue()
     queue = []
+    queueend = []
 
     visited = [start]
+    visitedend = [end]
     #queue.put(start)
     queue.append((start, sys.maxsize))
+    queueend.append(((end), sys.maxsize))
 
-    while queue and not found:
+    while queue and queueend and not found:
         #random.shuffle(queue)
         queue = sorted(queue, key=itemgetter(1))
-        #print(len(queue))
+        queueend = sorted(queueend, key=itemgetter(1))
+        #print(len(queueend))
 
         #time.sleep(.1)
         #currentNode = queue.get()
         currentNode = queue.pop(0)
+        currentNodeEnd = queueend.pop(0)
 
         #print(currentNode, end)
         nodeValue = graph.grid[currentNode[0][1]][currentNode[0][0]]
+        nodeValueEnd = graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]]
         #print(nodeValue)
 
         if nodeValue == 0:
@@ -115,18 +122,62 @@ def run():
         else:
             pass
 
+        if nodeValueEnd == 0:
+            distancesend = currentNodeEnd[1]
+            grid.drawGrid2(graph, currentNodeEnd[0], distancesend)
+            graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]] = 4
+        else:
+            pass
+
         #visited.append(currentNode)
-        edges = graph.edges.get(currentNode[0],None)
+        edges = graph.edges.get(currentNode[0], None)
+        edgesEnd = graph.edges.get(currentNodeEnd[0], None)
         #print(edges)
-        if edges != None:
+        if edgesEnd != None and not found:
+            closest_edge = []
+            for edge in edgesEnd:
+                if edge in visited:
+                    print("End found start tip")
+                    found = 1
+                    temp = edge # parent of current node we working with
+                    distance[currentNodeEnd[0]] = temp
+                    temp = currentNodeEnd[0]
+                    while temp != end and temp != None:
+                        #print(temp)
+                        #print(distanceend[temp])
+                        child = distanceend[temp]
+                        distance[child] = temp
+                        temp = child
+                if edge not in visited and edge not in visitedend and graph.grid[edge[1]][edge[0]] != 1:
+                    # closest_edge.append((edge, check_distance(edge, end)))
+                    queueend.append((edge, check_distance(edge, start)))
+                    # queue.put(edge)
+                    visitedend.append(edge)
+                    distanceend[edge] = currentNodeEnd[0]
+
+        if edges != None and not found:
             closest_edge = []
             for edge in edges:
-                if edge not in visited and graph.grid[edge[1]][edge[0]] != 1:
+                if edge in visitedend:
+                    print("Start found end tip")
+                    found = 1
+                    temp = currentNode[0]  # parent of current node we working with
+                    distance[edge] = temp
+                    temp = edge
+                    while temp != end and temp != None:
+                        # print(temp)
+                        # print(distanceend[temp])
+                        child = distanceend[temp]
+                        distance[child] = temp
+                        temp = child
+                if edge not in visited and edge not in visitedend and graph.grid[edge[1]][edge[0]] != 1:
                     #closest_edge.append((edge, check_distance(edge, end)))
-                    queue.append(((edge),check_distance(edge,end)))
+                    queue.append((edge, check_distance(edge, end)))
                     #queue.put(edge)
                     visited.append(edge)
                     distance[edge] = currentNode[0]
+
+
            # print(closest_edge)
 
             if False:
