@@ -93,8 +93,8 @@ def run():
     queue = []
     queueend = []
 
-    visited = [start]
-    visitedend = [end]
+    #visited = [start]
+    #visitedend = [end]
     #queue.put(start)
     queue.append((start, sys.maxsize))
     queueend.append(((end), sys.maxsize))
@@ -136,7 +136,7 @@ def run():
         if edgesEnd != None and not found:
             closest_edge = []
             for edge in edgesEnd:
-                if edge in visited:
+                if edge in distance.keys() and not found:
                     print("End found start tip")
                     found = 1
                     temp = edge # parent of current node we working with
@@ -148,17 +148,17 @@ def run():
                         child = distanceend[temp]
                         distance[child] = temp
                         temp = child
-                if edge not in visited and edge not in visitedend and graph.grid[edge[1]][edge[0]] != 1:
+                if edge not in distance and edge not in distanceend and graph.grid[edge[1]][edge[0]] != 1:
                     # closest_edge.append((edge, check_distance(edge, end)))
                     queueend.append((edge, check_distance(edge, start)))
                     # queue.put(edge)
-                    visitedend.append(edge)
+                    #visitedend.append(edge)
                     distanceend[edge] = currentNodeEnd[0]
 
         if edges != None and not found:
             closest_edge = []
             for edge in edges:
-                if edge in visitedend:
+                if edge in distanceend.keys():
                     print("Start found end tip")
                     found = 1
                     temp = currentNode[0]  # parent of current node we working with
@@ -170,11 +170,11 @@ def run():
                         child = distanceend[temp]
                         distance[child] = temp
                         temp = child
-                if edge not in visited and edge not in visitedend and graph.grid[edge[1]][edge[0]] != 1:
+                if edge not in distance and edge not in distanceend and graph.grid[edge[1]][edge[0]] != 1:
                     #closest_edge.append((edge, check_distance(edge, end)))
                     queue.append((edge, check_distance(edge, end)))
                     #queue.put(edge)
-                    visited.append(edge)
+                    #visited.append(edge)
                     distance[edge] = currentNode[0]
 
 
