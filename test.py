@@ -63,10 +63,10 @@ def populate_dirty(grid, number, size):
             grid[randx][randy] = 1
 
 
-if __name__ == '__main__':
-    size = 100
+def run():
+    size = 200
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, 5000, size)
+    populate_dirty(graph.grid, 10000, size)
 
     start = graph.start
     end = graph.end
@@ -94,7 +94,7 @@ if __name__ == '__main__':
             grid.drawGrid2(graph, currentNode)
             graph.grid[currentNode[1]][currentNode[0]] = 4
         else:
-            print("not 0")
+            print("Found start/end node")
 
         #visited.append(currentNode)
         edges = graph.edges.get(currentNode,None)
@@ -123,7 +123,9 @@ if __name__ == '__main__':
             print("No path found!")
             finish = 1
 
+if __name__ == '__main__':
     while True:
+        run()
         pygame.display.update()
+        time.sleep(1)
 
-    graph.__print__()

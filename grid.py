@@ -14,7 +14,7 @@ WHITE = (255, 255, 255) # Wall Node
 BLACK = (0, 0, 0) # Empty Node
 YELLOW = (255, 255, 0) # End Node
 GREY = (128, 128, 128) # Visited Node
-DARKGREY = (200, 200, 200) # Next Node
+DARKGREY = (100, 100, 100) # Next Node
 BLUE = (0, 0, 255) #Backtrack Node
 
 WIN.fill(BLACK)
