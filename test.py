@@ -74,9 +74,9 @@ def check_distance(coorda, coordb):
     return int(-(math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
 
 def run():
-    size = 250
+    size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, 20000, size)
+    populate_dirty(graph.grid, int(grid.WIDTH/8), size)
 
     start = graph.start
     end = graph.end
@@ -148,7 +148,7 @@ def run():
     finish = 0
     backtrack = end
     while not finish:
-        time.sleep(.01)
+        time.sleep(.001)
         if backtrack == start:
             finish = 1
         if backtrack != start and backtrack != end:
