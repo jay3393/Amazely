@@ -18,6 +18,9 @@ GREY = (128, 128, 128) # Visited Node
 DARKGREY = (100, 100, 100) # Next Node
 BLUE = (0, 0, 255) #Backtrack Node
 GREEN = (0, 255, 0)
+GREEN2 = (0, 125, 0)
+PURPLE = (225, 0, 225)
+PURPLE2 = (125, 0, 125)
 
 WIN.fill(BLACK)
 
@@ -27,23 +30,27 @@ def drawGrid3(grid, coord):
     yi = coord[1]
     x = xi * blockSize
     y = yi * blockSize
+
     rect = pygame.Rect(x, y, blockSize, blockSize)
-    pygame.draw.rect(WIN, BLUE, rect)
+    pygame.draw.rect(WIN, GREEN, rect)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
     pygame.display.update()
 
-def drawGrid2(grid, coord):
+def drawGrid2(grid, coord, distance):
     blockSize = int(WIDTH / grid.size)  # Set the size of the grid block
     xi = coord[0]
     yi = coord[1]
     x = xi * blockSize
     y = yi * blockSize
+    blue = min(int(distance/117), 255)
+    red = 255 - blue
+
     rect = pygame.Rect(x, y, blockSize, blockSize)
-    #color = random.choice([GREEN, DARKGREY, GREY])
-    pygame.draw.rect(WIN, DARKGREY, rect)
+    pygame.draw.rect(WIN, (red, 0, blue), rect)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -58,7 +65,7 @@ def initialize_grid(grid):
             yi = int(y/blockSize)
             if grid.grid[yi][xi] == 0:
                 rect = pygame.Rect(x, y, blockSize, blockSize)
-                pygame.draw.rect(WIN, WHITE, rect)
+                pygame.draw.rect(WIN, DARKGREY, rect)
             if grid.grid[yi][xi] == 1:
                 rect = pygame.Rect(x, y, blockSize, blockSize)
                 pygame.draw.rect(WIN, BLACK, rect)

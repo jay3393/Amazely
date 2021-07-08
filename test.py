@@ -71,12 +71,12 @@ def check_distance(coorda, coordb):
     bx = coordb[0]
     by = coordb[1]
 
-    return int(-(math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
+    return int((math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
 
 def run():
-    size = 250
+    size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, 20000, size)
+    populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
 
     start = graph.start
     end = graph.end
@@ -93,38 +93,43 @@ def run():
 
     visited = [start]
     #queue.put(start)
-    queue.insert(0, start)
+    queue.append((start, sys.maxsize))
 
     while queue and not found:
         #random.shuffle(queue)
-        #queue = sorted(queue, key=itemgetter(1))
+        queue = sorted(queue, key=itemgetter(1))
+        #print(len(queue))
 
         #time.sleep(.1)
         #currentNode = queue.get()
         currentNode = queue.pop(0)
-        #print(currentNode, end)
-        nodeValue = graph.grid[currentNode[1]][currentNode[0]]
 
+        #print(currentNode, end)
+        nodeValue = graph.grid[currentNode[0][1]][currentNode[0][0]]
+        #print(nodeValue)
 
         if nodeValue == 0:
-            grid.drawGrid2(graph, currentNode)
-            graph.grid[currentNode[1]][currentNode[0]] = 4
+            distances = currentNode[1]
+            grid.drawGrid2(graph, currentNode[0], distances)
+            graph.grid[currentNode[0][1]][currentNode[0][0]] = 4
         else:
             pass
 
         #visited.append(currentNode)
-        edges = graph.edges.get(currentNode,None)
+        edges = graph.edges.get(currentNode[0],None)
+        #print(edges)
         if edges != None:
             closest_edge = []
             for edge in edges:
                 if edge not in visited and graph.grid[edge[1]][edge[0]] != 1:
-                    closest_edge.append((edge, check_distance(edge, end)))
+                    #closest_edge.append((edge, check_distance(edge, end)))
+                    queue.append(((edge),check_distance(edge,end)))
                     #queue.put(edge)
                     visited.append(edge)
-                    distance[edge] = currentNode
+                    distance[edge] = currentNode[0]
            # print(closest_edge)
 
-            if True:
+            if False:
                 closest_edge = sorted(closest_edge, key=itemgetter(1))
 
                 if len(closest_edge) > 1:
@@ -148,7 +153,7 @@ def run():
     finish = 0
     backtrack = end
     while not finish:
-        time.sleep(.01)
+        time.sleep(.001)
         if backtrack == start:
             finish = 1
         if backtrack != start and backtrack != end:
