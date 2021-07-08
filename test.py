@@ -76,7 +76,7 @@ def check_distance(coorda, coordb):
 def run():
     size = 250
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, 30000, size)
+    populate_dirty(graph.grid, 20000, size)
 
     start = graph.start
     end = graph.end
@@ -96,6 +96,9 @@ def run():
     queue.insert(0, start)
 
     while queue and not found:
+        #random.shuffle(queue)
+        #queue = sorted(queue, key=itemgetter(1))
+
         #time.sleep(.1)
         #currentNode = queue.get()
         currentNode = queue.pop(0)
@@ -124,13 +127,16 @@ def run():
             if True:
                 closest_edge = sorted(closest_edge, key=itemgetter(1))
 
-                if len(closest_edge) >= 1:
+                if len(closest_edge) > 1:
                     front = closest_edge[len(closest_edge) - 1]
                     queue.insert(0, front[0])
 
-                for edge in range(len(closest_edge)):
-                    #queue.put(edge[0])
-                    queue.append(closest_edge[edge][0])
+                    for edge in range(len(closest_edge)):
+                        #queue.put(edge[0])
+                        queue.append(closest_edge[edge][0])
+
+                elif len(closest_edge) == 1:
+                    queue.insert(0, closest_edge[0][0])
 
                 #print(queue)
 
@@ -150,12 +156,15 @@ def run():
         try:
             backtrack = distance[backtrack]
         except:
-            print("No path found!")
+            print(f"No path found!")
             finish = 1
 
 if __name__ == '__main__':
     while True:
+        old_time = time.time()
         run()
         pygame.display.update()
+        print(f"Time taken: {time.time()- old_time}")
+        print("Running next generation")
         time.sleep(3)
 

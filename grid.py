@@ -3,6 +3,7 @@ import math
 from queue import PriorityQueue
 import sys
 import test
+import random
 
 WIDTH = 1000
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
@@ -16,6 +17,7 @@ YELLOW = (255, 255, 0) # End Node
 GREY = (128, 128, 128) # Visited Node
 DARKGREY = (100, 100, 100) # Next Node
 BLUE = (0, 0, 255) #Backtrack Node
+GREEN = (0, 255, 0)
 
 WIN.fill(BLACK)
 
@@ -40,6 +42,7 @@ def drawGrid2(grid, coord):
     x = xi * blockSize
     y = yi * blockSize
     rect = pygame.Rect(x, y, blockSize, blockSize)
+    #color = random.choice([GREEN, DARKGREY, GREY])
     pygame.draw.rect(WIN, DARKGREY, rect)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
