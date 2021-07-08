@@ -4,7 +4,7 @@ from queue import PriorityQueue
 import sys
 import test
 
-WIDTH = 800
+WIDTH = 1000
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("Breadth First Search Visualizer")
 

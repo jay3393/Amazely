@@ -4,6 +4,8 @@ import grid
 import time
 import pygame
 import random
+import sys
+from operator import itemgetter
 
 EMPTY = 0
 WALL = 1
@@ -30,6 +32,7 @@ class Graph():
             self.grid.append(temp)
             for box in range(self.size):
                 temp.append(0)
+
 
         # Fix the grid edges to 1's
         for box in range(self.size):
@@ -62,11 +65,18 @@ def populate_dirty(grid, number, size):
         if grid[randx][randy] != 1 and grid[randx][randy] != 2 and grid[randx][randy] != 3:
             grid[randx][randy] = 1
 
+def check_distance(coorda, coordb):
+    ax = coorda[0]
+    ay = coorda[1]
+    bx = coordb[0]
+    by = coordb[1]
+
+    return int(-(math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
 
 def run():
-    size = 200
+    size = 250
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, 10000, size)
+    populate_dirty(graph.grid, 30000, size)
 
     start = graph.start
     end = graph.end
@@ -78,14 +88,17 @@ def run():
 
     distance = {start:None}
 
-    queue = Queue()
+    #queue = Queue()
+    queue = []
 
     visited = [start]
-    queue.put(start)
+    #queue.put(start)
+    queue.insert(0, start)
 
-    while not queue.empty() and not found:
+    while queue and not found:
         #time.sleep(.1)
-        currentNode = queue.get()
+        #currentNode = queue.get()
+        currentNode = queue.pop(0)
         #print(currentNode, end)
         nodeValue = graph.grid[currentNode[1]][currentNode[0]]
 
@@ -94,16 +107,33 @@ def run():
             grid.drawGrid2(graph, currentNode)
             graph.grid[currentNode[1]][currentNode[0]] = 4
         else:
-            print("Found start/end node")
+            pass
 
         #visited.append(currentNode)
         edges = graph.edges.get(currentNode,None)
         if edges != None:
+            closest_edge = []
             for edge in edges:
                 if edge not in visited and graph.grid[edge[1]][edge[0]] != 1:
-                    queue.put(edge)
+                    closest_edge.append((edge, check_distance(edge, end)))
+                    #queue.put(edge)
                     visited.append(edge)
                     distance[edge] = currentNode
+           # print(closest_edge)
+
+            if True:
+                closest_edge = sorted(closest_edge, key=itemgetter(1))
+
+                if len(closest_edge) >= 1:
+                    front = closest_edge[len(closest_edge) - 1]
+                    queue.insert(0, front[0])
+
+                for edge in range(len(closest_edge)):
+                    #queue.put(edge[0])
+                    queue.append(closest_edge[edge][0])
+
+                #print(queue)
+
 
         if nodeValue == 3:
             #print(distance)
@@ -127,5 +157,5 @@ if __name__ == '__main__':
     while True:
         run()
         pygame.display.update()
-        time.sleep(1)
+        time.sleep(3)
 
