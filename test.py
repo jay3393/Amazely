@@ -99,6 +99,8 @@ def run():
     queue.append((start, sys.maxsize))
     queueend.append(((end), sys.maxsize))
 
+    time.sleep(2)
+
     while queue and queueend and not found:
         #random.shuffle(queue)
         queue = sorted(queue, key=itemgetter(1))
@@ -222,5 +224,5 @@ if __name__ == '__main__':
         pygame.display.update()
         print(f"Time taken: {time.time()- old_time}")
         print("Running next generation")
-        time.sleep(3)
+        time.sleep(2)
 
