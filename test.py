@@ -97,7 +97,7 @@ def run():
 
     while queue and not found:
         #random.shuffle(queue)
-        #queue = sorted(queue, key=itemgetter(1))
+        queue = sorted(queue, key=itemgetter(1))
 
         #time.sleep(.1)
         #currentNode = queue.get()
