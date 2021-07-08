@@ -91,11 +91,12 @@ def run():
     #queue = Queue()
     queue = []
 
-    visited = [start]
+    #visited = [start]
     #queue.put(start)
     queue.append((start, sys.maxsize))
 
     while queue and not found:
+        #print(len(visited), len(queue), len(distance))
         #random.shuffle(queue)
         queue = sorted(queue, key=itemgetter(1))
         #print(len(queue))
@@ -121,11 +122,11 @@ def run():
         if edges != None:
             closest_edge = []
             for edge in edges:
-                if edge not in visited and graph.grid[edge[1]][edge[0]] != 1:
+                if edge not in distance and graph.grid[edge[1]][edge[0]] != 1:
                     #closest_edge.append((edge, check_distance(edge, end)))
                     queue.append(((edge),check_distance(edge,end)))
                     #queue.put(edge)
-                    visited.append(edge)
+                    #visited.append(edge)
                     distance[edge] = currentNode[0]
            # print(closest_edge)
 
