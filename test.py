@@ -66,7 +66,7 @@ def populate_dirty(grid, number, size):
 if __name__ == '__main__':
     size = 100
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-    populate_dirty(graph.grid, 3000, size)
+    populate_dirty(graph.grid, 5000, size)
 
     start = graph.start
     end = graph.end
@@ -117,7 +117,11 @@ if __name__ == '__main__':
             finish = 1
         if backtrack != start and backtrack != end:
             grid.drawGrid3(graph, backtrack)
-        backtrack = distance[backtrack]
+        try:
+            backtrack = distance[backtrack]
+        except:
+            print("No path found!")
+            finish = 1
 
     while True:
         pygame.display.update()
