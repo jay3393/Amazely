@@ -39,13 +39,17 @@ class Graph():
 
         # Make all boxes on the edges of the graph into walls
         self.create_border()
-        self.place_start_end()
         self.find_edges()
 
     # Place the start and end node on the graph
     def place_start_end(self):
-        self.grid[self.start[1]][self.start[0]] = 2
-        self.grid[self.end[1]][self.end[0]] = 3
+        self.start = (random.randrange(1, self.size - 1), random.randrange(1, self.size - 1))
+        self.end = (random.randrange(1, self.size - 1), random.randrange(1, self.size - 1))
+        if self.grid[self.start[1]][self.start[0]] == 0 and self.grid[self.end[1]][self.end[0]] == 0:
+            self.grid[self.start[1]][self.start[0]] = 2
+            self.grid[self.end[1]][self.end[0]] = 3
+        else:
+            self.place_start_end()
 
     # Fix the border of the graph
     def create_border(self):
@@ -110,9 +114,8 @@ def populate_clean(grid, startcorner, endcorner):
             cut = int(width/5) - 1
         for y in range(height):
             #print(y, cut)
-            box = grid[startcorner[0] + y][startcorner[1] + cut]
-            if box != 2 and box != 3:
-                grid[startcorner[0] + y][startcorner[1] + cut] = 1
+            # box = grid[startcorner[0] + y][startcorner[1] + cut]
+            grid[startcorner[0] + y][startcorner[1] + cut] = 1
         for x in range(max(int(height/5), 2)):
             if height != 1:
                 grid[random.randrange(startcorner[0], endcorner[0])][startcorner[1] + cut] = 0
@@ -126,10 +129,7 @@ def populate_clean(grid, startcorner, endcorner):
         else:
             cut = int(height/5) - 1
         for y in range(width):
-            #print(cut)
-            box = grid[startcorner[0] + cut][startcorner[1] + y]
-            if box != 2 and box != 3:
-                grid[startcorner[0] + cut][startcorner[1] + y] = 1
+            grid[startcorner[0] + cut][startcorner[1] + y] = 1
         for x in range(max(int(width/5), 2)):
             if width != 1:
                 grid[startcorner[0] + cut][random.randrange(startcorner[1], endcorner[1])] = 0
@@ -146,13 +146,16 @@ def check_distance(coorda, coordb):
     return int((math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
 
 def run():
-    size = int(grid.WIDTH/10)
+    size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
 
     populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
     # populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
     graph.create_border()
+    graph.place_start_end()
     grid.initialize_grid(graph)
+
+    print(graph.grid[graph.start[1]][graph.start[0]], graph.end)
 
     start = graph.start
     end = graph.end
@@ -174,7 +177,7 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
-        time.sleep(0.02)
+        #time.sleep(0.01)
 
         """Switch between these two queue methods to change the way the program searches"""
         # random.shuffle(queue)
