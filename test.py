@@ -41,6 +41,7 @@ class Graph():
             self.grid[box][self.size - 1] = 1  # Right
             self.grid[self.size - 1][box] = 1 # Bottom
 
+        # Place the start and end node on the graph
         self.grid[self.start[1]][self.start[0]] = 2
         self.grid[self.end[1]][self.end[0]] = 3
 
@@ -182,21 +183,7 @@ def run():
 
            # print(closest_edge)
 
-            if False:
-                closest_edge = sorted(closest_edge, key=itemgetter(1))
 
-                if len(closest_edge) > 1:
-                    front = closest_edge[len(closest_edge) - 1]
-                    queue.insert(0, front[0])
-
-                    for edge in range(len(closest_edge)):
-                        #queue.put(edge[0])
-                        queue.append(closest_edge[edge][0])
-
-                elif len(closest_edge) == 1:
-                    queue.insert(0, closest_edge[0][0])
-
-                #print(queue)
 
 
         if nodeValue == 3:
