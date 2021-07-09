@@ -1,9 +1,5 @@
 import pygame
-import math
-from queue import PriorityQueue
 import sys
-import test
-import random
 
 WIDTH = 1000
 WIN = pygame.display.set_mode((WIDTH, WIDTH))

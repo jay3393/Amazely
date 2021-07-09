@@ -1,5 +1,4 @@
 import math
-from queue import Queue
 import grid
 import time
 import pygame
@@ -14,6 +13,10 @@ END = 3
 VISITED = 4
 
 class Graph():
+    """
+    Graph class contains grid to show the value of each box in the grid
+    Used to initialize and display pathfinding algorithm
+    """
     def __init__(self, size, start, end):
         self.size = size
         if self.size < 4:
@@ -45,8 +48,10 @@ class Graph():
         self.grid[self.start[1]][self.start[0]] = 2
         self.grid[self.end[1]][self.end[0]] = 3
 
+        # Fix the border of the graph, make all boxes on the edges of the graph into walls
         self.find_edges()
 
+    # Function to populate the edges of the graph to 1's (walls)
     def find_edges(self):
         for row in range(1, self.size - 1):
             for box in range(1, self.size - 1):
@@ -59,6 +64,7 @@ class Graph():
         except:
             return
 
+# Function to randomly generate a maze/noise using inputs of the grid, the number of dirty boxes, and the size of the graph
 def populate_dirty(grid, number, size):
     for x in range(number):
         randx = random.randrange(1, size - 1)
@@ -66,6 +72,7 @@ def populate_dirty(grid, number, size):
         if grid[randx][randy] != 1 and grid[randx][randy] != 2 and grid[randx][randy] != 3:
             grid[randx][randy] = 1
 
+# Takes the distance formula and apply it to two points in the graph
 def check_distance(coorda, coordb):
     ax = coorda[0]
     ay = coorda[1]
@@ -77,47 +84,45 @@ def check_distance(coorda, coordb):
 def run():
     size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
+
     populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
+    grid.initialize_grid(graph)
 
     start = graph.start
     end = graph.end
-
-    grid.initialize_grid(graph)
-
     found = 0
-    #print(graph.grid)
 
-    distance = {start:None}
-    distanceend = {end:None}
+    # Dictionaries to trace which node found which in the order -> {child: parent}
+    # For the following, we use two of each to record each of the two, start and end nodes
+    distance = {start: None}
+    distanceEnd = {end: None}
 
-    #queue = Queue()
+    # Arrays to keep trace of which nodes to search next
+    # Initializes the queue to first track the start and end simultaneously
     queue = []
-    queueend = []
-
-    #visited = [start]
-    #visitedend = [end]
-    #queue.put(start)
+    queueEnd = []
     queue.append((start, sys.maxsize))
-    queueend.append(((end), sys.maxsize))
+    queueEnd.append(((end), sys.maxsize))
 
+    # Time to wait before solving the maze
     time.sleep(2)
 
-    while queue and queueend and not found:
-        #random.shuffle(queue)
+    while queue and queueEnd and not found:
+        # Switch between these two queue methods to change the way the program searches
+        # random.shuffle(queue)
+        # random.shuffle(queueEnd)
         queue = sorted(queue, key=itemgetter(1))
-        queueend = sorted(queueend, key=itemgetter(1))
-        #print(len(queueend))
+        queueEnd = sorted(queueEnd, key=itemgetter(1))
 
-        #time.sleep(.1)
-        #currentNode = queue.get()
+        # Pop the first element in the queue
         currentNode = queue.pop(0)
-        currentNodeEnd = queueend.pop(0)
+        currentNodeEnd = queueEnd.pop(0)
 
-        #print(currentNode, end)
+        # Assign the value of this node to a variable used to detect if the node is an empty cell
         nodeValue = graph.grid[currentNode[0][1]][currentNode[0][0]]
         nodeValueEnd = graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]]
-        #print(nodeValue)
 
+        # If the node IS an emtpy cell, then draw the cell as visited and mark it as visited
         if nodeValue == 0:
             distances = currentNode[1]
             grid.drawGrid2(graph, currentNode[0], distances)
@@ -132,64 +137,53 @@ def run():
         else:
             pass
 
-        #visited.append(currentNode)
+        # Gets all the neighbors of the node
         edges = graph.edges.get(currentNode[0], None)
         edgesEnd = graph.edges.get(currentNodeEnd[0], None)
-        #print(edges)
+
+        # For the neighbors of the node, check that each of it's neighbors are not in the start node's visited array
+        # If the node's neighbor is in the start node's visited array, then take the current backtrace of end node and add it onto start node (backtrace)
+        # If the node's neighbor is not in the start node's visited array, then add this node to the backtrace of end node
         if edgesEnd != None and not found:
-            closest_edge = []
             for edge in edgesEnd:
                 if edge in distance.keys() and not found:
                     print("End found start tip")
                     found = 1
-                    temp = edge # parent of current node we working with
+                    temp = edge  # parent of current node we working with
                     distance[currentNodeEnd[0]] = temp
                     temp = currentNodeEnd[0]
                     while temp != end and temp != None:
-                        #print(temp)
-                        #print(distanceend[temp])
-                        child = distanceend[temp]
+                        child = distanceEnd[temp]
                         distance[child] = temp
                         temp = child
-                if edge not in distance and edge not in distanceend and graph.grid[edge[1]][edge[0]] != 1:
-                    # closest_edge.append((edge, check_distance(edge, end)))
-                    queueend.append((edge, check_distance(edge, start)))
-                    # queue.put(edge)
-                    #visitedend.append(edge)
-                    distanceend[edge] = currentNodeEnd[0]
+                if edge not in distance.keys() and edge not in distanceEnd.keys() and graph.grid[edge[1]][edge[0]] != 1:
+                    queueEnd.append((edge, check_distance(edge, start)))
+                    distanceEnd[edge] = currentNodeEnd[0]
 
         if edges != None and not found:
-            closest_edge = []
             for edge in edges:
-                if edge in distanceend.keys():
+                if edge in distanceEnd.keys():
                     print("Start found end tip")
                     found = 1
                     temp = currentNode[0]  # parent of current node we working with
                     distance[edge] = temp
                     temp = edge
                     while temp != end and temp != None:
-                        # print(temp)
-                        # print(distanceend[temp])
-                        child = distanceend[temp]
+                        child = distanceEnd[temp]
                         distance[child] = temp
                         temp = child
-                if edge not in distance and edge not in distanceend and graph.grid[edge[1]][edge[0]] != 1:
-                    #closest_edge.append((edge, check_distance(edge, end)))
+                if edge not in distance and edge not in distanceEnd and graph.grid[edge[1]][edge[0]] != 1:
                     queue.append((edge, check_distance(edge, end)))
-                    #queue.put(edge)
-                    #visited.append(edge)
                     distance[edge] = currentNode[0]
 
+        # Safety check that validates that the node
+        # if nodeValue == 3:
+        #     print("reached")
+        #     found = 1
 
-           # print(closest_edge)
 
-
-
-
-        if nodeValue == 3:
-            #print(distance)
-            found = 1
-
+    # Backtraces the given dictionary of child: parent pairs
+    # Shows the parent value that found the child key
     finish = 0
     backtrack = end
     while not finish:
