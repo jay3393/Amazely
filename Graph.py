@@ -11,6 +11,7 @@ WALL = 1
 START = 2
 END = 3
 VISITED = 4
+EXPLORED = 5
 
 class Graph():
     """
@@ -173,9 +174,9 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
-        time.sleep(0.01)
+        time.sleep(0.02)
 
-        # Switch between these two queue methods to change the way the program searches
+        """Switch between these two queue methods to change the way the program searches"""
         # random.shuffle(queue)
         # random.shuffle(queueEnd)
         queue = sorted(queue, key=itemgetter(1))
@@ -192,15 +193,17 @@ def run():
         # If the node IS an emtpy cell, then draw the cell as visited and mark it as visited
         if nodeValue == 0:
             distances = currentNode[1]
+            graph.grid[currentNode[0][1]][currentNode[0][0]] = 5
             grid.drawGrid2(graph, currentNode[0], distances)
-            graph.grid[currentNode[0][1]][currentNode[0][0]] = 4
+            #graph.grid[currentNode[0][1]][currentNode[0][0]] = 4
         else:
             pass
 
         if nodeValueEnd == 0:
             distancesend = currentNodeEnd[1]
+            graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]] = 5
             grid.drawGrid2(graph, currentNodeEnd[0], distancesend)
-            graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]] = 4
+            #graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]] = 5
         else:
             pass
 
@@ -224,7 +227,10 @@ def run():
                         distance[child] = temp
                         temp = child
                 if edge not in distance.keys() and edge not in distanceEnd.keys() and graph.grid[edge[1]][edge[0]] != 1:
+                    #graph.grid[edge[1]][edge[0]] = 4
                     queueEnd.append((edge, check_distance(edge, start)))
+                    """draws the visited nodes"""
+                    grid.drawGrid2(graph, edge, check_distance(edge, start))
                     distanceEnd[edge] = currentNodeEnd[0]
 
         if edges != None and not found:
@@ -240,7 +246,9 @@ def run():
                         distance[child] = temp
                         temp = child
                 if edge not in distance and edge not in distanceEnd and graph.grid[edge[1]][edge[0]] != 1:
+                    #graph.grid[edge[1]][edge[0]] = 4
                     queue.append((edge, check_distance(edge, end)))
+                    grid.drawGrid2(graph, edge, check_distance(edge, end))
                     distance[edge] = currentNode[0]
 
         # Safety check that validates that the node

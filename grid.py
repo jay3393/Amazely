@@ -41,11 +41,16 @@ def drawGrid2(grid, coord, distance):
     yi = coord[1]
     x = xi * blockSize
     y = yi * blockSize
-    blue = min(int(distance/117), 255)
+    blue = min(int(distance/int(int((grid.size * 100)/2)/255)), 255)
+    #print(distance, grid.size, int((grid.size * 100)/2)/255)
     red = 255 - blue
 
-    rect = pygame.Rect(x, y, blockSize, blockSize)
-    pygame.draw.rect(WIN, (red, 0, blue), rect)
+    if grid.grid[yi][xi] == 5:
+        rect = pygame.Rect(x, y, blockSize, blockSize)
+        pygame.draw.rect(WIN, (red, 0, blue), rect)
+    else:
+        rect = pygame.Rect(x, y, blockSize, blockSize)
+        pygame.draw.rect(WIN, WHITE, rect)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
