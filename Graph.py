@@ -36,20 +36,24 @@ class Graph():
             for box in range(self.size):
                 temp.append(0)
 
+        # Make all boxes on the edges of the graph into walls
+        self.create_border()
+        self.place_start_end()
+        self.find_edges()
 
-        # Fix the grid edges to 1's
-        for box in range(self.size):
-            self.grid[0][box] = 1 # Top
-            self.grid[box][0] = 1 # Left
-            self.grid[box][self.size - 1] = 1  # Right
-            self.grid[self.size - 1][box] = 1 # Bottom
-
-        # Place the start and end node on the graph
+    # Place the start and end node on the graph
+    def place_start_end(self):
         self.grid[self.start[1]][self.start[0]] = 2
         self.grid[self.end[1]][self.end[0]] = 3
 
-        # Fix the border of the graph, make all boxes on the edges of the graph into walls
-        self.find_edges()
+    # Fix the border of the graph
+    def create_border(self):
+        # Fix the grid edges to 1's
+        for box in range(self.size):
+            self.grid[0][box] = 1  # Top
+            self.grid[box][0] = 1  # Left
+            self.grid[box][self.size - 1] = 1  # Right
+            self.grid[self.size - 1][box] = 1  # Bottom
 
     # Function to populate the edges of the graph to 1's (walls)
     def find_edges(self):
@@ -76,7 +80,24 @@ def populate_clean(grid, startcorner, endcorner):
     width = endcorner[1] - startcorner[1] + 1
     height = endcorner[0] - startcorner[0] + 1
     #print(f"width: {width}, height: {height}, start: {startcorner}, end: {endcorner}")
-    if width == 5 and height == 5:
+    # Adjust minsize to determine base room size for recursion
+    minsize = 5
+    if width == minsize and height == minsize:
+        #print(f"width: {width}, height: {height}, start: {startcorner}, end: {endcorner}")
+        horizontal = random.choice([0,1])
+        # 0 = vertical
+        # 1 = horizontal
+        if horizontal:
+            #print("horizontal")
+            for x in range(minsize):
+                grid[startcorner[1] + 1][random.randrange(startcorner[0], endcorner[0])] = 1
+                #grid[startcorner[1] + 3][random.randrange(startcorner[0], endcorner[0])] = 2
+        else:
+            #print("vertical")
+            for x in range(minsize):
+                grid[random.randrange(startcorner[1], endcorner[1])][startcorner[0] + 1] = 1
+                #grid[random.randrange(startcorner[1], endcorner[1])][startcorner[0] + 3] = 1
+
         #print("what")
         return #print("basecase")
     if width >= height:
@@ -88,7 +109,9 @@ def populate_clean(grid, startcorner, endcorner):
             cut = int(width/5) - 1
         for y in range(height):
             #print(y, cut)
-            grid[startcorner[0] + y][startcorner[1] + cut] = 1
+            box = grid[startcorner[0] + y][startcorner[1] + cut]
+            if box != 2 and box != 3:
+                grid[startcorner[0] + y][startcorner[1] + cut] = 1
         for x in range(max(int(height/5), 2)):
             if height != 1:
                 grid[random.randrange(startcorner[0], endcorner[0])][startcorner[1] + cut] = 0
@@ -103,7 +126,9 @@ def populate_clean(grid, startcorner, endcorner):
             cut = int(height/5) - 1
         for y in range(width):
             #print(cut)
-            grid[startcorner[0] + cut][startcorner[1] + y] = 1
+            box = grid[startcorner[0] + cut][startcorner[1] + y]
+            if box != 2 and box != 3:
+                grid[startcorner[0] + cut][startcorner[1] + y] = 1
         for x in range(max(int(width/5), 2)):
             if width != 1:
                 grid[startcorner[0] + cut][random.randrange(startcorner[1], endcorner[1])] = 0
@@ -120,11 +145,12 @@ def check_distance(coorda, coordb):
     return int((math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
 
 def run():
-    size = int(grid.WIDTH/2)
+    size = int(grid.WIDTH/10)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
 
     populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
     # populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
+    graph.create_border()
     grid.initialize_grid(graph)
 
     start = graph.start
@@ -147,7 +173,7 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
-        #time.sleep(0.1)
+        time.sleep(0.01)
 
         # Switch between these two queue methods to change the way the program searches
         # random.shuffle(queue)
@@ -246,5 +272,5 @@ if __name__ == '__main__':
         pygame.display.update()
         print(f"Time taken: {time.time()- old_time}")
         print("Running next generation")
-        time.sleep(2)
+        time.sleep(5)
 
