@@ -72,6 +72,44 @@ def populate_dirty(grid, number, size):
         if grid[randx][randy] != 1 and grid[randx][randy] != 2 and grid[randx][randy] != 3:
             grid[randx][randy] = 1
 
+def populate_clean(grid, startcorner, endcorner):
+    width = endcorner[1] - startcorner[1] + 1
+    height = endcorner[0] - startcorner[0] + 1
+    #print(f"width: {width}, height: {height}, start: {startcorner}, end: {endcorner}")
+    if width == 5 and height == 5:
+        #print("what")
+        return #print("basecase")
+    if width >= height:
+        #print("vertical")
+        cut = None
+        if width % 2 == 0:
+            cut = int(width/2) - 1
+        else:
+            cut = int(width/5) - 1
+        for y in range(height):
+            #print(y, cut)
+            grid[startcorner[0] + y][startcorner[1] + cut] = 1
+        for x in range(max(int(height/5), 2)):
+            if height != 1:
+                grid[random.randrange(startcorner[0], endcorner[0])][startcorner[1] + cut] = 0
+        #print((startcorner[0], startcorner[1] + cut), endcorner)
+        return populate_clean(grid, startcorner, (endcorner[0], startcorner[1] + cut)), populate_clean(grid, (startcorner[0], startcorner[1] + cut + 1), endcorner)
+    else:
+        #print("horizontal")
+        cut = None
+        if height % 2 == 0:
+            cut = int(height/2) - 1
+        else:
+            cut = int(height/5) - 1
+        for y in range(width):
+            #print(cut)
+            grid[startcorner[0] + cut][startcorner[1] + y] = 1
+        for x in range(max(int(width/5), 2)):
+            if width != 1:
+                grid[startcorner[0] + cut][random.randrange(startcorner[1], endcorner[1])] = 0
+        #print(grid, (startcorner[0] + cut, startcorner[1]), endcorner)
+        return populate_clean(grid, startcorner, (startcorner[0] + cut, endcorner[1])), populate_clean(grid, (startcorner[0] + cut + 1, startcorner[1]), endcorner)
+
 # Takes the distance formula and apply it to two points in the graph
 def check_distance(coorda, coordb):
     ax = coorda[0]
@@ -85,7 +123,8 @@ def run():
     size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
 
-    populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
+    populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
+    # populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
     grid.initialize_grid(graph)
 
     start = graph.start
@@ -108,6 +147,8 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
+        #time.sleep(0.1)
+
         # Switch between these two queue methods to change the way the program searches
         # random.shuffle(queue)
         # random.shuffle(queueEnd)
