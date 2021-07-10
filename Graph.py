@@ -45,9 +45,9 @@ class Graph():
     def place_start_end(self):
         self.start = (random.randrange(1, self.size - 1), random.randrange(1, self.size - 1))
         self.end = (random.randrange(1, self.size - 1), random.randrange(1, self.size - 1))
-        if self.grid[self.start[1]][self.start[0]] == 0 and self.grid[self.end[1]][self.end[0]] == 0:
-            self.grid[self.start[1]][self.start[0]] = 2
-            self.grid[self.end[1]][self.end[0]] = 3
+        if self.grid[self.start[0]][self.start[1]] == 0 and self.grid[self.end[0]][self.end[1]] == 0:
+            self.grid[self.start[0]][self.start[1]] = 2
+            self.grid[self.end[0]][self.end[1]] = 3
         else:
             self.place_start_end()
 
@@ -147,40 +147,37 @@ def check_distance(coorda, coordb):
 
 def populate_maze(graph, size):
     walls = []
-    grid = graph.grid
+    gridder = graph.grid
     groupings = []
     for y in range(2, size - 2, 2):
         for x in range(0, size - 2):
-            grid[y][x] = 1
+            gridder[y][x] = 1
         for x in range(1, size - 2, 2):
             walls.append((y, x))
-            grid[y][x] = 1
+            gridder[y][x] = 1
 
     for x in range(2, size - 2, 2):
         for y in range(0, size - 2):
-            grid[y][x] = 1
+            gridder[y][x] = 1
         for y in range(1, size - 2, 2):
             walls.append((y, x))
-            grid[y][x] = 1
+            gridder[y][x] = 1
 
-    while walls:
+    for x in range(size - 1):
+        gridder[size - 2][x] = 1
+        gridder[x][size - 2] = 1
+
+    while True and walls:
+        print(f"Walls: {len(walls)}, groupings: {len(groupings)}")
+        # time.sleep(0.005)
         # Randomly chooses a removable wall and removes it from that group
         node = random.choice(walls)
+        #node = x
         walls.remove(node)
-
-        # complete = False
-        # Finds whether the neighbors of this wall
-        # up = (node[0] - 1, node[1])
-        # left = (node[0], node[1] - 1)
-        # right = (node[0], node[1] + 1)
-        # down = (node[0] + 1, node[1])
-
-        #choose_from = [up, left, right, down]
-        #print(graph.edges[node])
 
         boxes = []
         for edge in graph.edges[node]:
-            if grid[edge[0]][edge[1]] == 0:
+            if gridder[edge[0]][edge[1]] == 0:
                 boxes.append(edge)
 
         # Should only have 2 white spaces to worry about
@@ -189,68 +186,59 @@ def populate_maze(graph, size):
         box2 = boxes[1]
         container1 = None
         container2 = None
-        #print(len(groupings))
-        for x in range(len(groupings)):
-            if box1 in groupings[x]:
+
+        for group in groupings:
+            if box1 in group:
                 #print("box1")
-                container1 = x
-            if box2 in groupings[x]:
+                container1 = group
+            if box2 in group:
                 #print("box2")
-                container2 = x
-
-        #print(box1, box2, container1, container2)
-
-        # If the containers are both in the same grouping then don't remove the wall
-        if container1 != None and container1 == container2:
-            print("Both boxes are in the same container, DO NOT remove wall")
-            grid[node[0]][node[1]] = 1
+                container2 = group
 
         # If the containers are both None, then make a new grouping and add those two tuples in that grouping
         if container1 == None and container2 == None:
-            print("Both boxes are not in any groupings, remove wall")
+            # print("Both boxes are not in any groupings, remove wall")
             grouping = [box1, box2]
             groupings.append(grouping)
-            grid[node[0]][node[1]] = 0
+            gridder[node[0]][node[1]] = 0
+            gridder[box1[0]][box1[1]] = 0
+            gridder[box2[0]][box2[1]] = 0
+
+        # If the containers are both in the same grouping then don't remove the wall
+        elif container1 != None and container1 == container2:
+            gridder[node[0]][node[1]] = 1
 
         # If both containers are different (either or neither but not both can be None),
         # then remove both groupings, add a new one and add both boxes to the new grouping
-        if container1 != container2:
+        elif container1 != container2:
+            gridder[node[0]][node[1]] = 0
+            gridder[box1[0]][box1[1]] = 0
+            gridder[box2[0]][box2[1]] = 0
             if container1 != None and container2 != None:
-                print("Boxes are in different groupings, combine them")
-                if container1 > container2:
-                    groupings.pop(container1)
-                    groupings.pop(container2 - 1)
-                else:
-                    groupings.pop(container2)
-                    groupings.pop(container1 - 1)
-                grouping = [box1, box2]
+                #print("Boxes are in different groupings, combine them")
+                grouping = container1 + container2
+                groupings.remove(container1)
+                groupings.remove(container2)
                 groupings.append(grouping)
             elif container1 == None:
-                print("Add box1 to box2 grouping")
-                groupings[container2].append(box1)
+                #print("Add box1 to box2 grouping")
+                groupings[groupings.index(container2)].append(box1)
             elif container2 == None:
-                print("Add box1 to box2 grouping")
-                groupings[container1].append(box2)
+                #print("Add box1 to box2 grouping")
+                groupings[groupings.index(container1)].append(box2)
 
-            # Set the wall to a 1 but don't add it to grouping because its not needed there
-            grid[node[0]][node[1]] = 0
-
-        #pygame.display.update()
-        # while not complete and choose_from:
-        #     direction_chosen = random.choice(choose_from)
-        #     if grid[direction_chosen[0]][direction_chosen[1]] != 0:
-        #         grid[direction_chosen[0]][direction_chosen[1]] = 0
-        #         complete = True
-        #     choose_from.remove(direction_chosen)
+        grid.drawGrid2(graph, node, None)
+        grid.drawGrid2(graph, box1, None)
+        grid.drawGrid2(graph, box2, None)
 
 def run():
     size = int(grid.WIDTH/10)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
 
     populate_maze(graph, size)
-    #populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
+    # populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
     # populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
-    #graph.create_border()
+    # graph.create_border()
     graph.place_start_end()
     grid.initialize_grid(graph)
 
@@ -276,34 +264,34 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
-        time.sleep(0.05)
+        time.sleep(0.01)
 
         """Switch between these two queue methods to change the way the program searches"""
-        random.shuffle(queue)
-        random.shuffle(queueEnd)
-        # queue = sorted(queue, key=itemgetter(1))
-        # queueEnd = sorted(queueEnd, key=itemgetter(1))
+        # random.shuffle(queue)
+        # random.shuffle(queueEnd)
+        queue = sorted(queue, key=itemgetter(1))
+        queueEnd = sorted(queueEnd, key=itemgetter(1))
 
         # Pop the first element in the queue
         currentNode = queue.pop(0)
         currentNodeEnd = queueEnd.pop(0)
 
         # Assign the value of this node to a variable used to detect if the node is an empty cell
-        nodeValue = graph.grid[currentNode[0][1]][currentNode[0][0]]
-        nodeValueEnd = graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]]
+        nodeValue = graph.grid[currentNode[0][0]][currentNode[0][1]]
+        nodeValueEnd = graph.grid[currentNodeEnd[0][0]][currentNodeEnd[0][1]]
 
         # If the node IS an emtpy cell, then draw the cell as visited and mark it as visited
-        if nodeValue == 0:
+        if nodeValue == 4:
             distances = currentNode[1]
-            graph.grid[currentNode[0][1]][currentNode[0][0]] = 5
+            graph.grid[currentNode[0][0]][currentNode[0][1]] = 5
             grid.drawGrid2(graph, currentNode[0], distances)
             #graph.grid[currentNode[0][1]][currentNode[0][0]] = 4
         else:
             pass
 
-        if nodeValueEnd == 0:
+        if nodeValueEnd == 4:
             distancesend = currentNodeEnd[1]
-            graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]] = 5
+            graph.grid[currentNodeEnd[0][0]][currentNodeEnd[0][1]] = 5
             grid.drawGrid2(graph, currentNodeEnd[0], distancesend)
             #graph.grid[currentNodeEnd[0][1]][currentNodeEnd[0][0]] = 5
         else:
@@ -328,8 +316,8 @@ def run():
                         child = distanceEnd[temp]
                         distance[child] = temp
                         temp = child
-                if edge not in distance.keys() and edge not in distanceEnd.keys() and graph.grid[edge[1]][edge[0]] != 1:
-                    #graph.grid[edge[1]][edge[0]] = 4
+                if edge not in distance.keys() and edge not in distanceEnd.keys() and graph.grid[edge[0]][edge[1]] != 1:
+                    graph.grid[edge[0]][edge[1]] = 4
                     queueEnd.append((edge, check_distance(edge, start)))
                     """draws the visited nodes"""
                     grid.drawGrid2(graph, edge, check_distance(edge, start))
@@ -347,8 +335,8 @@ def run():
                         child = distanceEnd[temp]
                         distance[child] = temp
                         temp = child
-                if edge not in distance and edge not in distanceEnd and graph.grid[edge[1]][edge[0]] != 1:
-                    #graph.grid[edge[1]][edge[0]] = 4
+                if edge not in distance.keys() and edge not in distanceEnd.keys() and graph.grid[edge[0]][edge[1]] != 1:
+                    graph.grid[edge[0]][edge[1]] = 4
                     queue.append((edge, check_distance(edge, end)))
                     grid.drawGrid2(graph, edge, check_distance(edge, end))
                     distance[edge] = currentNode[0]
@@ -382,5 +370,5 @@ if __name__ == '__main__':
         pygame.display.update()
         print(f"Time taken: {time.time()- old_time}")
         print("Running next generation")
-        time.sleep(10)
+        time.sleep(3)
 
