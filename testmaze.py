@@ -1,14 +1,12 @@
-import Graph
-import grid
-import random
-import pygame
+groupings = []
 
-if __name__ == '__main__':
-    while True:
-        size = int(grid.WIDTH/2)
-        graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
-        Graph.populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
-        grid.initialize_grid(graph)
+for x in range(0, 100):
+    for y in range(0, 100):
+        grouping = (x, y)
+        groupings.append([grouping])
 
+print(groupings)
 
-        pygame.display.update()
+for x in range(len(groupings)):
+    if (0,0) in groupings[x]:
+        print(x)

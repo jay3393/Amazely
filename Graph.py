@@ -145,17 +145,116 @@ def check_distance(coorda, coordb):
 
     return int((math.sqrt((bx-ax)**2 + (by-ay)**2) * 100))
 
+def populate_maze(graph, size):
+    walls = []
+    grid = graph.grid
+    groupings = []
+    for y in range(2, size - 2, 2):
+        for x in range(0, size - 2):
+            grid[y][x] = 1
+        for x in range(1, size - 2, 2):
+            walls.append((y, x))
+            grid[y][x] = 1
+
+    for x in range(2, size - 2, 2):
+        for y in range(0, size - 2):
+            grid[y][x] = 1
+        for y in range(1, size - 2, 2):
+            walls.append((y, x))
+            grid[y][x] = 1
+
+    while walls:
+        # Randomly chooses a removable wall and removes it from that group
+        node = random.choice(walls)
+        walls.remove(node)
+
+        # complete = False
+        # Finds whether the neighbors of this wall
+        # up = (node[0] - 1, node[1])
+        # left = (node[0], node[1] - 1)
+        # right = (node[0], node[1] + 1)
+        # down = (node[0] + 1, node[1])
+
+        #choose_from = [up, left, right, down]
+        #print(graph.edges[node])
+
+        boxes = []
+        for edge in graph.edges[node]:
+            if grid[edge[0]][edge[1]] == 0:
+                boxes.append(edge)
+
+        # Should only have 2 white spaces to worry about
+        # Check that both white spaces are not in the same grouping
+        box1 = boxes[0]
+        box2 = boxes[1]
+        container1 = None
+        container2 = None
+        #print(len(groupings))
+        for x in range(len(groupings)):
+            if box1 in groupings[x]:
+                #print("box1")
+                container1 = x
+            if box2 in groupings[x]:
+                #print("box2")
+                container2 = x
+
+        #print(box1, box2, container1, container2)
+
+        # If the containers are both in the same grouping then don't remove the wall
+        if container1 != None and container1 == container2:
+            print("Both boxes are in the same container, DO NOT remove wall")
+            grid[node[0]][node[1]] = 1
+
+        # If the containers are both None, then make a new grouping and add those two tuples in that grouping
+        if container1 == None and container2 == None:
+            print("Both boxes are not in any groupings, remove wall")
+            grouping = [box1, box2]
+            groupings.append(grouping)
+            grid[node[0]][node[1]] = 0
+
+        # If both containers are different (either or neither but not both can be None),
+        # then remove both groupings, add a new one and add both boxes to the new grouping
+        if container1 != container2:
+            if container1 != None and container2 != None:
+                print("Boxes are in different groupings, combine them")
+                if container1 > container2:
+                    groupings.pop(container1)
+                    groupings.pop(container2 - 1)
+                else:
+                    groupings.pop(container2)
+                    groupings.pop(container1 - 1)
+                grouping = [box1, box2]
+                groupings.append(grouping)
+            elif container1 == None:
+                print("Add box1 to box2 grouping")
+                groupings[container2].append(box1)
+            elif container2 == None:
+                print("Add box1 to box2 grouping")
+                groupings[container1].append(box2)
+
+            # Set the wall to a 1 but don't add it to grouping because its not needed there
+            grid[node[0]][node[1]] = 0
+
+        #pygame.display.update()
+        # while not complete and choose_from:
+        #     direction_chosen = random.choice(choose_from)
+        #     if grid[direction_chosen[0]][direction_chosen[1]] != 0:
+        #         grid[direction_chosen[0]][direction_chosen[1]] = 0
+        #         complete = True
+        #     choose_from.remove(direction_chosen)
+
 def run():
-    size = int(grid.WIDTH/2)
+    size = int(grid.WIDTH/10)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
 
-    populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
+    populate_maze(graph, size)
+    #populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
     # populate_dirty(graph.grid, grid.WIDTH * int(grid.WIDTH/8), size)
-    graph.create_border()
+    #graph.create_border()
     graph.place_start_end()
     grid.initialize_grid(graph)
 
-    print(graph.grid[graph.start[1]][graph.start[0]], graph.end)
+    #print(graph.grid[graph.start[1]][graph.start[0]], graph.end)
 
     start = graph.start
     end = graph.end
@@ -177,13 +276,13 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
-        #time.sleep(0.01)
+        time.sleep(0.05)
 
         """Switch between these two queue methods to change the way the program searches"""
-        # random.shuffle(queue)
-        # random.shuffle(queueEnd)
-        queue = sorted(queue, key=itemgetter(1))
-        queueEnd = sorted(queueEnd, key=itemgetter(1))
+        random.shuffle(queue)
+        random.shuffle(queueEnd)
+        # queue = sorted(queue, key=itemgetter(1))
+        # queueEnd = sorted(queueEnd, key=itemgetter(1))
 
         # Pop the first element in the queue
         currentNode = queue.pop(0)
@@ -283,5 +382,5 @@ if __name__ == '__main__':
         pygame.display.update()
         print(f"Time taken: {time.time()- old_time}")
         print("Running next generation")
-        time.sleep(5)
+        time.sleep(10)
 
