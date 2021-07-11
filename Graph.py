@@ -167,6 +167,9 @@ def populate_maze(graph, size):
         gridder[size - 2][x] = 1
         gridder[x][size - 2] = 1
 
+    grid.WIN.fill((0, 0, 0))
+    # grid.initialize_grid(graph)
+
     while True and walls:
         print(f"Walls: {len(walls)}, groupings: {len(groupings)}")
         # time.sleep(0.005)
@@ -232,8 +235,9 @@ def populate_maze(graph, size):
         grid.drawGrid2(graph, box2, None)
 
 def run():
-    size = int(grid.WIDTH/10)
+    size = int(grid.WIDTH/2)
     graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
+
 
     populate_maze(graph, size)
     # populate_clean(graph.grid, (0,0), (graph.size - 1, graph.size - 1))
@@ -264,13 +268,13 @@ def run():
     time.sleep(2)
 
     while queue and queueEnd and not found:
-        time.sleep(0.01)
+        #time.sleep(0.01)
 
         """Switch between these two queue methods to change the way the program searches"""
         # random.shuffle(queue)
         # random.shuffle(queueEnd)
-        queue = sorted(queue, key=itemgetter(1))
-        queueEnd = sorted(queueEnd, key=itemgetter(1))
+        # queue = sorted(queue, key=itemgetter(1))
+        # queueEnd = sorted(queueEnd, key=itemgetter(1))
 
         # Pop the first element in the queue
         currentNode = queue.pop(0)
