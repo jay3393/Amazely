@@ -27,6 +27,7 @@ class Graph():
         self.start = start
         self.end = end
         self.edges = {}
+        self.border = []
         self.initialize_grid()
 
     def initialize_grid(self):
@@ -59,6 +60,10 @@ class Graph():
             self.grid[box][0] = 1  # Left
             self.grid[box][self.size - 1] = 1  # Right
             self.grid[self.size - 1][box] = 1  # Bottom
+            self.border.append((0,box))
+            self.border.append((box, 0))
+            self.border.append((box, self.size - 1))
+            self.border.append((self.size - 1, box))
 
     # Function to populate the edges of the graph to 1's (walls)
     def find_edges(self):

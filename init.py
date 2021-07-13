@@ -60,8 +60,9 @@ def init():
                         start_placed = None
                     if box == 3:
                         end_placed = None
-                    grid.draw_undo(graph, (row, col))
-                    graph.grid[row][col] = 0
+                    if (row, col) not in graph.border:
+                        grid.draw_undo(graph, (row, col))
+                        graph.grid[row][col] = 0
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not started and start_placed and end_placed:
