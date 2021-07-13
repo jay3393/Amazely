@@ -93,3 +93,42 @@ def initialize_grid(grid):
                 pygame.draw.rect(WIN, RED, rect)
     pygame.display.update()
 
+def draw_wall(grid, coord):
+    y, x = coord
+    blockSize = int(WIDTH / grid.size)
+    y = y * blockSize
+    x = x * blockSize
+
+    rect = pygame.Rect(x, y, blockSize, blockSize)
+    pygame.draw.rect(WIN, BLACK, rect)
+    pygame.display.update()
+
+def draw_start(grid, coord, previous):
+    y, x = coord
+    blockSize = int(WIDTH / grid.size)
+    y = y * blockSize
+    x = x * blockSize
+
+    rect = pygame.Rect(x, y, blockSize, blockSize)
+    pygame.draw.rect(WIN, YELLOW, rect)
+    pygame.display.update()
+
+def draw_end(grid, coord, previous):
+    y, x = coord
+    blockSize = int(WIDTH / grid.size)
+    y = y * blockSize
+    x = x * blockSize
+
+    rect = pygame.Rect(x, y, blockSize, blockSize)
+    pygame.draw.rect(WIN, RED, rect)
+    pygame.display.update()
+
+def draw_undo(grid, coord):
+    y, x = coord
+    blockSize = int(WIDTH / grid.size)
+    y = y * blockSize
+    x = x * blockSize
+
+    rect = pygame.Rect(x, y, blockSize, blockSize)
+    pygame.draw.rect(WIN, DARKGREY, rect)
+    pygame.display.update()

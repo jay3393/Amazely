@@ -18,14 +18,14 @@ def bidirection_bfs_solver(graph):
     queueEnd.append(((end), sys.maxsize))
 
     # Time to wait before solving the maze
-    time.sleep(2)
+    # time.sleep(2)
 
     while queue and queueEnd and not found:
-        # time.sleep(0.01)
+        time.sleep(0.01)
 
         """Comment out queue and queueEnd for bidirectional bfs instead of bidirectional sorted queue"""
-        # queue = sorted(queue, key=itemgetter(1))
-        # queueEnd = sorted(queueEnd, key=itemgetter(1))
+        queue = sorted(queue, key=itemgetter(1))
+        queueEnd = sorted(queueEnd, key=itemgetter(1))
 
         # Pop the first element in the queue
         currentNode = queue.pop(0)
