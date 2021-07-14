@@ -76,9 +76,9 @@ def init():
         # Initialize a graph object, the graph object should be showing on the screen
         graph = Graph(size, (random.randrange(1, size - 1), random.randrange(1, size - 1)), (random.randrange(1, size - 1), random.randrange(1, size - 1)))
         populate_maze(graph, size)
-        # populate_dirty(graph.grid, 2000, graph.size)
+        # populate_dirty(graph.grid, 100000, graph.size)
         graph.place_start_end()
         grid.initialize_grid(graph)
     # Create the start and end point onto the graph and start the solver
     # bidirection_bfs_solver(graph) #14.17,12.67
-    # a_star_solver(graph) #14.77
+    a_star_solver(graph) #14.77
