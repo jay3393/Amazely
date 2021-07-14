@@ -15,13 +15,13 @@ def bidirection_bfs_solver(graph):
     queue = []
     queueEnd = []
     queue.append((start, sys.maxsize))
-    queueEnd.append(((end), sys.maxsize))
+    queueEnd.append((end, sys.maxsize))
 
     # Time to wait before solving the maze
     # time.sleep(2)
 
     while queue and queueEnd and not found:
-        time.sleep(0.01)
+        time.sleep(0.001)
 
         """Comment out queue and queueEnd for bidirectional bfs instead of bidirectional sorted queue"""
         queue = sorted(queue, key=itemgetter(1))
