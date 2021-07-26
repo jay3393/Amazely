@@ -3,6 +3,7 @@ Simple self made algorithm using BFS to find a path from start to end. No tutori
 
 ### Maze generation algorithm
 Generates mazes using randomized Kruskal's Algorithm
+
 **References** https://professor-l.github.io/mazes/
 
 ![2021-07-25_21-43-14](https://user-images.githubusercontent.com/60624849/126922351-1d39be3f-e604-4d0d-a588-ae46f68ae3d8.gif)
