@@ -11,7 +11,7 @@ Generates mazes using randomized Kruskal's Algorithm
 Users can place walls as obstacles
 
 ##### Bi-directional BFS Algorithm
-![2021-07-25_21-52-39](https://user-images.githubusercontent.com/60624849/126922850-fe0e4d1b-baa8-4a15-9f8f-b78b17c42596.gif)
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/60624849/126923363-288332a3-671f-4382-a41b-f185fb622347.gif)
 
 ##### A* Pathfinding Algorithm
-![2021-07-25_21-58-01](https://user-images.githubusercontent.com/60624849/126923099-4bd4e160-a454-4bfc-91fc-e02d04ed7627.gif)
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/60624849/126923296-5ad4a68e-4387-4bbf-9e76-48a1997acc42.gif)
